@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시험 직전 · 암기형 복습 퀴즈</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#1c2637;background:#fff5f9;line-height:1.55;--accent:#a92360;--muted:#4b5b74;--edge:#dbe3ef}*{box-sizing:border-box}body{margin:0}main{max-width:980px;margin:auto;padding:40px 20px 56px}h1,h2,p{margin:0}h1{font-size:clamp(1.8rem,5vw,2.65rem);line-height:1.2;letter-spacing:-.045em;margin:5px 0 10px}h2{font-size:1.12rem;letter-spacing:-.02em}.eyebrow{font-size:.76rem;font-weight:800;letter-spacing:.12em;color:var(--accent)}.muted,small{color:var(--muted)}.panel{background:#fff;border:1px solid var(--edge);border-radius:20px;padding:22px;min-width:0;box-shadow:0 6px 22px #233b6210}.progress-panel{margin:24px 0 16px}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.percent{color:var(--accent);font-weight:800;font-variant-numeric:tabular-nums}progress{width:100%;height:12px;display:block;margin:12px 0;appearance:none;border:0;border-radius:12px;background:#f8dfe9;overflow:hidden}progress::-webkit-progress-bar{background:#f8dfe9}progress::-webkit-progress-value{background:var(--accent)}progress::-moz-progress-bar{background:var(--accent)}.grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:start}.tabs,.ratings{display:grid;gap:8px}.tabs{grid-template-columns:repeat(3,minmax(0,1fr));margin:14px 0}.ratings{grid-template-columns:repeat(3,1fr);margin:12px 0}button,input,textarea{font:inherit}button{cursor:pointer;border:1px solid var(--edge);border-radius:11px;min-height:44px;padding:8px 10px;background:#fff;color:inherit;font-weight:700}button:hover:not(:disabled){filter:brightness(.96)}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #a92360;outline-offset:2px}.primary,.tabs [aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}.card,.empty{min-height:220px;width:100%;border-radius:17px;background:#fce8f0;border:1px solid #f0c6d7;text-align:center;padding:22px;display:grid;align-content:center;justify-items:center;gap:9px}.card.back{background:#ecf8f4;border-color:#c7e7db}.card-label{color:#39517e;font-size:.82rem}.card-text{font-size:clamp(1.15rem,4vw,1.7rem);white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%}.card-hint{font-size:.8rem;color:var(--muted);font-weight:500}.empty{background:#f7f9fc;border-style:dashed;color:var(--muted)}.ratings button:nth-child(1){background:#e5f6ed;color:#155b38}.ratings button:nth-child(2){background:#fff3d7;color:#733d00}.ratings button:nth-child(3){background:#fdebef;color:#86273b}.nav{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;text-align:center}.nav small{font-variant-numeric:tabular-nums}.nav button:first-child{justify-self:start}.nav button:last-child{justify-self:end}form{display:grid;gap:10px;margin-top:12px}label{font-size:.9rem;font-weight:750}input,textarea{display:block;width:100%;padding:10px 11px;border:1px solid #aebbd0;border-radius:10px;color:inherit;background:#fff;margin-top:4px}textarea{resize:vertical;min-height:90px}.hint{margin-top:12px;font-size:.83rem}.feedback{min-height:1.55em;font-size:.86rem;color:var(--muted)}#study-feedback{margin-top:10px}.warning{margin:12px 0;color:#86273b;font-size:.9rem}[hidden]{display:none!important}@media(max-width:680px){main{padding:25px 12px 36px}.grid{grid-template-columns:1fr}.panel{padding:16px}.card,.empty{min-height:180px}.tabs button{padding-inline:5px;font-size:.9rem}}@media(prefers-reduced-motion:no-preference){.card{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body><main>
+<header><p class="eyebrow">FLASHCARD QUIZ</p><h1>시험 직전 · 암기 퀴즈</h1><p class="muted">용어를 보고 뜻을 떠올린 뒤, 카드 뒷면에서 정답을 확인하세요.</p></header>
+<p id="warning" class="warning" role="alert" hidden>브라우저 저장소를 사용할 수 없습니다. 이 페이지를 닫거나 새로고침하면 입력한 내용이나 학습 기록이 사라질 수 있습니다.</p>
+<section class="panel progress-panel" aria-labelledby="progress-title">
+<div class="row"><h2 id="progress-title">학습 진행률</h2><span id="percent" class="percent">0%</span></div>
+<progress id="progress" max="100" value="0" aria-labelledby="progress-title"></progress><p id="counts" class="muted"></p>
+</section>
+<div class="grid">
+<section class="panel" aria-labelledby="study-title">
+<h2 id="study-title">카드 학습</h2>
+<div class="tabs" role="group" aria-label="학습 모드"><button type="button" id="all" aria-pressed="true">전체 학습</button><button type="button" id="review" aria-pressed="false">집중 복습 (0)</button><button type="button" id="completed" aria-pressed="false">학습 완료 (0)</button></div>
+<div id="empty" class="empty"></div>
+<div id="quiz" hidden>
+<button type="button" id="card" class="card" aria-describedby="card-hint"><span id="card-label" class="card-label"></span><span id="card-text" class="card-text"></span><span id="card-hint" class="card-hint"></span></button>
+<div class="ratings" role="group" aria-label="암기 여부"><button type="button" data-grade="known" disabled>외움</button><button type="button" data-grade="shaky" disabled>헷갈림</button><button type="button" data-grade="again" disabled>다시</button></div>
+<div class="nav"><button type="button" id="prev">이전</button><small id="position"></small><button type="button" id="next">다음</button></div>
+</div>
+<p id="study-feedback" class="feedback" role="status"></p>
+</section>
+<section class="panel" aria-labelledby="add-title">
+<h2 id="add-title">용어 추가</h2>
+<form id="add-form"><label for="term">용어<input id="term" required maxlength="120" placeholder="예: 기회비용"></label><label for="answer">정답<textarea id="answer" required maxlength="1500" placeholder="예: 어떤 선택을 할 때 포기한 대안 중 가장 가치가 큰 것"></textarea></label><button class="primary" type="submit">카드 추가</button><p id="add-feedback" class="feedback" role="status"></p></form>
+<p class="hint muted">카드와 학습 기록은 이 브라우저에 저장됩니다. 기기 간에는 동기화되지 않습니다.</p>
+</section></div></main>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const key = 'exam-flashcards-ko-v1';
+const labels = {known:'외움',shaky:'헷갈림',again:'다시',new:'미학습'};
+const gradeButtons = [...document.querySelectorAll('[data-grade]')];
+let cards = [], mode = 'all', index = 0, flipped = false;
+try {
+  const raw = JSON.parse(localStorage.getItem(key) || '[]');
+  if (Array.isArray(raw)) cards = raw.filter(c => c && typeof c.term === 'string' && typeof c.answer === 'string' && Object.hasOwn(labels,c.grade));
+} catch { $('warning').hidden = false; }
+function save(){
+  try {localStorage.setItem(key,JSON.stringify(cards));}
+  catch {$('warning').hidden = false;}
+}
+const needsReview = c => c.grade === 'shaky' || c.grade === 'again';
+const deck = () => mode === 'review' ? cards.filter(needsReview) : mode === 'completed' ? cards.filter(c => c.grade === 'known') : cards;
+function render(){
+  const counts = {known:0,shaky:0,again:0,new:0};
+  for(const c of cards) counts[c.grade]++;
+  const total = cards.length;
+  const percent = total ? Math.floor(counts.known / total * 100) : 0;
+  $('progress').value = percent;
+  $('percent').textContent = percent + '%';
+  $('counts').textContent = `외움 ${counts.known}/${total}장 · 헷갈림 ${counts.shaky}장 · 다시 ${counts.again}장 · 미학습 ${counts.new}장`;
+  $('review').textContent = `집중 복습 (${counts.shaky + counts.again})`;
+  $('completed').textContent = `학습 완료 (${counts.known})`;
+  $('all').setAttribute('aria-pressed', mode === 'all');
+  $('review').setAttribute('aria-pressed', mode === 'review');
+  $('completed').setAttribute('aria-pressed', mode === 'completed');
+  const list = deck();
+  index = Math.max(0,Math.min(index,list.length-1));
+  const c = list[index];
+  $('empty').hidden = Boolean(c);
+  $('quiz').hidden = !c;
+  if(!c){
+    $('empty').textContent = !total ? '용어와 정답을 입력해 첫 카드를 추가하세요.' : mode === 'completed' ? '아직 학습 완료로 표시한 카드가 없습니다. 카드를 외움으로 평가하면 여기에 모입니다.' : mode === 'review' ? '복습할 카드가 없습니다. 전체 학습에서 ‘헷갈림’ 또는 ‘다시’로 표시한 카드가 여기에 모입니다.' : '표시할 카드가 없습니다.';
+    return;
+  }
+  $('card').classList.toggle('back',flipped);
+  $('card-label').textContent = `${flipped ? '정답' : '용어'} · ${labels[c.grade]}`;
+  $('card-text').textContent = flipped ? c.answer : c.term;
+  $('card-hint').textContent = flipped ? '암기 여부를 선택하거나 카드를 눌러 용어 보기' : '카드를 눌러 정답 확인';
+  $('position').textContent = `${index+1} / ${list.length}`;
+  $('prev').disabled = index === 0;
+  $('next').disabled = index === list.length-1;
+  for(const button of gradeButtons) button.disabled = !flipped;
+}
+function selectMode(value){
+  if(mode === value) return;
+  mode = value; index = 0; flipped = false;
+  $('study-feedback').textContent = '';
+  render();
+}
+$('all').addEventListener('click',()=>selectMode('all'));
+$('review').addEventListener('click',()=>selectMode('review'));
+$('completed').addEventListener('click',()=>selectMode('completed'));
+$('card').addEventListener('click',()=>{flipped = !flipped; render();});
+function move(step){
+  index += step; flipped = false;
+  $('study-feedback').textContent = '';
+  render(); $('card').focus();
+}
+$('prev').addEventListener('click',()=>move(-1));
+$('next').addEventListener('click',()=>move(1));
+for(const button of gradeButtons) button.addEventListener('click',()=>{
+  const c = deck()[index];
+  if(!c || !flipped) return;
+  const previousDeck = deck();
+  const previousIndex = index;
+  c.grade = button.dataset.grade;
+  save();
+  const nextDeck = deck();
+  const stillInDeck = nextDeck.includes(c);
+  if(nextDeck.length) {
+    // If this rating removes the current card from a filtered deck, the card that
+    // shifted into its slot is next; otherwise advance normally.
+    index = stillInDeck ? (previousIndex + 1) % nextDeck.length : Math.min(previousIndex, nextDeck.length - 1);
+  } else index = 0;
+  flipped = false;
+  render();
+  $('study-feedback').textContent = !nextDeck.length && mode === 'review' ? '집중 복습 완료! 복습할 카드가 모두 외움으로 바뀌었습니다.' : `‘${labels[c.grade]}’으로 기록했습니다.`;
+  (nextDeck.length ? $('card') : $('all')).focus();
+});
+$('add-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const term = $('term').value.trim(), answer = $('answer').value.trim();
+  if(!term || !answer){$('add-feedback').textContent='용어와 정답을 모두 입력하세요.'; (term ? $('answer') : $('term')).focus(); return;}
+  const wasEmpty = cards.length === 0;
+  cards.push({term,answer,grade:'new'});
+  if(wasEmpty){mode = 'all'; index = 0; flipped = false; $('study-feedback').textContent = '';}
+  save(); e.currentTarget.reset(); render();
+  $('add-feedback').textContent = `카드를 추가했습니다. 전체 ${cards.length}장`;
+  $('term').focus();
+});
+render();
+</script>
+</body>
+</html>
